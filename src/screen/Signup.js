@@ -1,48 +1,49 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
-    Alert,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { adduser } from '../redux/slice/UserdataSlice';
+import {useDispatch} from 'react-redux';
+import {adduser} from '../redux/slice/UserdataSlice';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const validationSchema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
-  name: yup.string()
-  .matches(
-    /^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/,
-    'Please enter a valid full name'
-  )
-  .required('Full name is required'),
-username: yup.string()
-  .matches(
-    /^[a-zA-Z0-9_]{4,}$/,
-    'Username must be at least 4 characters long and contain only letters, digits, and underscores'
-  )
-  .required('Username is required'),
-password: yup.string()
-  .min(8, 'Password must be at least 8 characters long')
-  .required('Password is required'),
-repeatPassword: yup.string()
-  .oneOf([yup.ref('password'), null], 'Passwords must match')
-  .required('Repeat password is required'),
+  name: yup
+    .string()
+    .matches(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/, 'Please enter a valid full name')
+    .required('Full name is required'),
+  username: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9_]{4,}$/,
+      'Username must be at least 4 characters long and contain only letters, digits, and underscores',
+    )
+    .required('Username is required'),
+  password: yup
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .required('Password is required'),
+  repeatPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
+    .required('Repeat password is required'),
 });
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit=(values)=>{
+  const handleSubmit = values => {
     // const {name,username,email,password}=values;
     // const user={
     //   name,
@@ -52,15 +53,20 @@ const Signup = () => {
     // }
     dispatch(adduser(values));
     navigation.navigate('Login');
-   
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Formik
-          initialValues={{name:'',username:'',email:'',password:'',repeatPassword:''}}
+          initialValues={{
+            name: '',
+            username: '',
+            email: '',
+            password: '',
+            repeatPassword: '',
+          }}
           validationSchema={validationSchema}
-          onSubmit={(values)=>handleSubmit(values)}>
+          onSubmit={values => handleSubmit(values)}>
           {({
             handleChange,
             handleBlur,
@@ -104,9 +110,8 @@ const Signup = () => {
                     )}
                   </View>
                   <View style={{marginTop: 20}}>
-                    <View>
-                      <Text>Email</Text>
-                    </View>
+                    <Text>Email</Text>
+
                     <TextInput
                       style={styles.input}
                       placeholder="Enter your password"
@@ -119,17 +124,25 @@ const Signup = () => {
                     )}
                   </View>
                   <View style={{marginTop: 20}}>
+                    <Text>Password</Text>
                     <View>
-                      <Text>Password</Text>
+                      <TextInput
+                        style={[styles.input, , {flex: 1}]}
+                        placeholder="Enter your password"
+                        secureTextEntry={!showPassword}
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                      />
+                      <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        style={{position: 'absolute', right: 10, top: 18}}>
+                        <Icon
+                          name={showPassword ? 'visibility' : 'visibility-off'}
+                          size={25}
+                        />
+                      </TouchableOpacity>
                     </View>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Enter your password"
-                      secureTextEntry={true}
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                    />
                     {touched.password && errors.password && (
                       <Text style={styles.errorText}>{errors.password}</Text>
                     )}
@@ -138,16 +151,28 @@ const Signup = () => {
                     <View>
                       <Text>Repeat password</Text>
                     </View>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Enter your password"
-                      secureTextEntry={true}
-                      onChangeText={handleChange('repeatPassword')}
-                      onBlur={handleBlur('repeatPassword')}
-                      value={values.repeatPassword}
-                    />
+                    <View>
+                      <TextInput
+                        style={[styles.input, {flex: 1}]}
+                        placeholder="Enter your password"
+                        secureTextEntry={true}
+                        onChangeText={handleChange('repeatPassword')}
+                        onBlur={handleBlur('repeatPassword')}
+                        value={values.repeatPassword}
+                      />
+                      <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        style={{position: 'absolute', right: 10, top: 18}}>
+                        <Icon
+                          name={showPassword ? 'visibility' : 'visibility-off'}
+                          size={25}
+                        />
+                      </TouchableOpacity>
+                    </View>
                     {touched.repeatPassword && errors.repeatPassword && (
-                      <Text style={styles.errorText}>{errors.repeatPassword}</Text>
+                      <Text style={styles.errorText}>
+                        {errors.repeatPassword}
+                      </Text>
                     )}
                   </View>
                   <TouchableOpacity onPress={handleSubmit}>
@@ -160,7 +185,7 @@ const Signup = () => {
         </Formik>
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <Text>Don't have an account?</Text>
+        <Text>Already have an account?</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.signupText}>Log in</Text>
         </TouchableOpacity>

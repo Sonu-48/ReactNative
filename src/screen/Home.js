@@ -1,7 +1,16 @@
-import {SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import styles from '../Styles';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Store from './Story';
+import PostSection from './PostSection';
 
 const Home = () => {
   const [uservalue, setUservalue] = useState({});
@@ -27,10 +36,25 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.wrapper}>
+        <View style={styles.header}>
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.h2}>Connected</Text>
+          </View>
+          <TouchableOpacity>
+            <Image
+              source={require('../assets/notification.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+        {/* Store Section */}
+        <Store/>
+        {/* Post Section */}
+        <PostSection/>
+        {/* <View style={styles.wrapper}>
           <Text style={styles.h2}>Welcome</Text>
           <Text style={styles.h3}>{uservalue && uservalue.name}</Text>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );

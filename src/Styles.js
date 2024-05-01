@@ -88,5 +88,66 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  icon: {
+    width: 30,
+    height: 30,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  inputicon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textfieldicon: {
+    flex: 1,
+  },
+  storyimagewrapper: {
+    width: 70,
+    height: 70,
+    borderRadius: 100,
+    borderWidth: 3,
+    // borderColor: 'tomato',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  h5:{
+    fontSize:15,
+    fontWeight:'500'
+  },
+  postwrapper:{
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor:'#fff',
+    borderRadius:10,
+    padding:20,
+    margin:20
+  },
+  postprofile:{
+    width:40,
+    height:40,
+    borderRadius:100,
+    marginRight:10
+  },
+  postimage:{
+    width:'100%',
+  },
+  postheader:{
+    marginBottom:20,
+    marginTop:10,
+    flex:1,
+    justifyContent:'space-between',
+    flexDirection:'row',
+    alignItems:'center'
+  },
+  h6:{
+    marginTop:15
+  }
 });
 export default styles;

@@ -1,29 +1,28 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
-    Alert,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
   View,
-  Switch
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const validationSchema = yup.object().shape({
-  username: yup.string()
-  .matches(
-    /^[a-zA-Z0-9_]{4,}$/,
-    'Username must be at least 4 characters long and contain only letters, digits, and underscores'
-  )
-  .required('Username is required'),
+  username: yup
+    .string()
+    .matches(
+      /^[a-zA-Z0-9_]{4,}$/,
+      'Username must be at least 4 characters long and contain only letters, digits, and underscores',
+    )
+    .required('Username is required'),
   password: yup
     .string()
     .min(6, 'Password must be at least 6 characters')
@@ -32,42 +31,44 @@ const validationSchema = yup.object().shape({
 
 const Login = () => {
   const navigation = useNavigation();
-  // const userdata = useSelector((state)=>state.userdata.uservalue)
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (values) => {
-   
+  const handleSubmit = async values => {
     try {
       const uservalue = await AsyncStorage.getItem('userData');
       if (uservalue) {
         const parseuserdata = JSON.parse(uservalue);
-        console.log("AsyncStorage user data:", parseuserdata);
-  
+        console.log('AsyncStorage user data:', parseuserdata);
+
         // Now you can compare the username and password with the fetched user data
-        if (values.username === parseuserdata.username && values.password === parseuserdata.password) {
-          Alert.alert("Login Successfully")
-          values.username = ''
-          values.password = ''
-          navigation.navigate('Home')
+        if (
+          values.username === parseuserdata.username &&
+          values.password === parseuserdata.password
+        ) {
+          Alert.alert('Login Successfully');
+          values.username = '';
+          values.password = '';
+          navigation.navigate('Home');
         } else {
-          Alert.alert("Invalid username or password")
+          Alert.alert('Invalid username or password');
         }
       } else {
-        Alert.alert("Invalid username or password")
-        values.username = ''
-        values.password = ''
+        Alert.alert('Invalid username or password');
+        values.username = '';
+        values.password = '';
       }
     } catch (error) {
-      console.error("Error fetching user data from AsyncStorage:", error);
+      console.error('Error fetching user data from AsyncStorage:', error);
     }
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Formik
           initialValues={{username: '', password: ''}}
           validationSchema={validationSchema}
-          onSubmit={(values)=>handleSubmit(values)}>
+          onSubmit={values => handleSubmit(values)}>
           {({
             handleChange,
             handleBlur,
@@ -104,20 +105,34 @@ const Login = () => {
                         justifyContent: 'space-between',
                       }}>
                       <Text>Password</Text>
-                      <TouchableOpacity onPress={()=>navigation.navigate('Forgot Password')}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('Forgot Password')}>
                         <Text style={[styles.signupText, styles.forgottext]}>
                           Forgot your password
                         </Text>
                       </TouchableOpacity>
                     </View>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Enter your password"
-                      secureTextEntry={true}
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                    />
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          {flex: 1, borderBottomWidth: 1, paddingVertical: 8},
+                        ]}
+                        placeholder="Enter your password"
+                        secureTextEntry={!showPassword}
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                      />
+                      <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        style={{position: 'absolute', right: 10, top: 18}}>
+                        <Icon
+                          name={showPassword ? 'visibility' : 'visibility-off'}
+                          size={25}
+                        />
+                      </TouchableOpacity>
+                    </View>
                     {touched.password && errors.password && (
                       <Text style={styles.errorText}>{errors.password}</Text>
                     )}
